@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="AIRFRAME観察ノートへログインするページ。" />
+    <title>ログイン — AIRFRAME</title>
+    <link rel="stylesheet" href="notes.css" />
+  </head>
+  <body class="auth-page">
+    <header class="site-header">
+      <a class="brand" href="index.html" aria-label="AIRFRAME トップへ"><span class="brand-mark">✦</span><span>AIRFRAME</span></a>
+      <nav class="site-nav" aria-label="メインナビゲーション">
+        <a href="index.html#guide">機種一覧</a><a href="index.html#how-to">見分け方</a><a href="notes.html">観察ノート</a>
+      </nav>
+    </header>
+
+    <main class="auth-wrap">
+      <section class="auth-card" aria-labelledby="login-title">
+        <p class="section-kicker">Your field note</p>
+        <h1 id="login-title">観察ノートへ<br />ログイン</h1>
+        <p>ログインして、自分だけの空の記録をひらきましょう。</p>
+        <form class="auth-form" id="login-form">
+          <label class="form-field" for="email">メールアドレス<input id="email" name="email" type="email" autocomplete="username" placeholder="you@example.com" required /></label>
+          <label class="form-field" for="password">パスワード<input id="password" name="password" type="password" autocomplete="current-password" placeholder="••••••••" minlength="4" required /></label>
+          <p class="auth-error" id="login-error" role="alert">メールアドレスとパスワードを入力してください。</p>
+          <button class="button yellow" type="submit">自分のページへ進む ↗</button>
+        </form>
+        <p class="auth-notice">現在は静的サイトで動くプロトタイプです。ログイン状態とノートはこのブラウザ内に保存されます。実際の公開運用では安全な認証サービスとの接続が必要です。</p>
+        <a class="back-link" href="notes.html">← 観察ノートに戻る</a>
+      </section>
+    </main>
+    <script>
+      const form = document.getElementById('login-form');
+      const error = document.getElementById('login-error');
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        if (!email || password.length < 4) {
+          error.classList.add('is-visible');
+          return;
+        }
+        const name = email.split('@')[0].replace(/[._-]+/g, ' ').trim() || 'Observer';
+        localStorage.setItem('airframeUser', JSON.stringify({ name, email }));
+        window.location.href = 'mypage.html';
+      });
+    </script>
+  </body>
+</html>

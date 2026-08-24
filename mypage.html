@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="AIRFRAME観察ノートのマイページ。" />
+    <title>マイ観察ノート — AIRFRAME</title>
+    <link rel="stylesheet" href="notes.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html" aria-label="AIRFRAME トップへ"><span class="brand-mark">✦</span><span>AIRFRAME</span></a>
+      <nav class="site-nav" aria-label="メインナビゲーション">
+        <a href="index.html#guide">機種一覧</a><a href="index.html#how-to">見分け方</a><a class="active" href="notes.html">観察ノート</a>
+      </nav>
+    </header>
+
+    <main class="account-shell">
+      <div class="account-bar">
+        <div><p class="account-kicker">Private field note</p><h1>あなたの観察ノート</h1></div>
+        <div class="account-chip"><span class="account-avatar" id="user-avatar">AF</span><span><strong id="user-name">Observer</strong><br /><small id="user-email">you@example.com</small></span><button class="logout-button" id="logout-button" type="button">ログアウト</button></div>
+      </div>
+
+      <div class="account-grid">
+        <section class="account-panel" aria-labelledby="new-note-title">
+          <p class="section-kicker">New observation</p>
+          <h2 id="new-note-title">空を記録する</h2>
+          <p>空港、型番、見えた特徴を残しておきましょう。</p>
+          <form class="note-form" id="note-form">
+            <label class="form-field" for="note-date">観察日<input id="note-date" type="date" required /></label>
+            <label class="form-field" for="note-airport">空港 / 場所<input id="note-airport" type="text" placeholder="成田 / さくらの山" required /></label>
+            <label class="form-field" for="note-model">機体の型番<input id="note-model" type="text" placeholder="例：Boeing 787-9" required /></label>
+            <label class="form-field" for="note-detail">観察メモ<textarea id="note-detail" placeholder="翼端、エンジン、窓まわりなど気づいたこと"></textarea></label>
+            <button class="button yellow" type="submit">ノートを保存する ↗</button>
+          </form>
+          <div class="stats" aria-label="観察ノートの統計"><div class="stat"><strong id="note-count">0</strong><span>NOTES</span></div><div class="stat"><strong id="airport-count">0</strong><span>PLACES</span></div><div class="stat"><strong id="model-count">0</strong><span>MODELS</span></div></div>
+        </section>
+
+        <section class="account-panel" aria-labelledby="saved-title">
+          <p class="section-kicker">Saved observations</p>
+          <h2 id="saved-title">保存した記録</h2>
+          <div class="note-list" id="note-list"></div>
+        </section>
+      </div>
+    </main>
+    <footer class="notes-footer"><span>AIRFRAME / PRIVATE FIELD NOTE</span><span>自分だけの空の記録。</span></footer>
+    <script>
+      let user = null;
+      try { user = JSON.parse(localStorage.getItem('airframeUser') || 'null'); } catch (error) { user = null; }
+      if (!user || !user.email) window.location.replace('login.html');
+
+      const userName = document.getElementById('user-name');
+      const userEmail = document.getElementById('user-email');
+      const userAvatar = document.getElementById('user-avatar');
+      userName.textContent = user ? user.name : 'Observer';
+      userEmail.textContent = user ? user.email : '';
+      userAvatar.textContent = user ? user.name.slice(0, 2).toUpperCase() : 'AF';
+
+      const noteForm = document.getElementById('note-form');
+      const noteList = document.getElementById('note-list');
+      const notesKey = 'airframeNotes';
+      const dateInput = document.getElementById('note-date');
+      dateInput.value = new Date().toISOString().slice(0, 10);
+
+      const readNotes = () => {
+        try { return JSON.parse(localStorage.getItem(notesKey) || '[]'); } catch (error) { return []; }
+      };
+      const renderNotes = () => {
+        const notes = readNotes();
+        noteList.replaceChildren();
+        if (!notes.length) {
+          const empty = document.createElement('p');
+          empty.className = 'no-notes';
+          empty.textContent = 'まだ記録がありません。左のフォームから最初の1件を保存してみましょう。';
+          noteList.append(empty);
+        }
+        notes.forEach((note) => {
+          const item = document.createElement('article');
+          item.className = 'saved-note';
+          const time = document.createElement('time');
+          time.dateTime = note.date;
+          time.textContent = `${note.date.replaceAll('-', '.')} / ${note.airport}`;
+          const heading = document.createElement('h3');
+          heading.textContent = note.model;
+          const detail = document.createElement('p');
+          detail.textContent = note.detail || '観察メモはありません。';
+          item.append(time, heading, detail);
+          noteList.append(item);
+        });
+        document.getElementById('note-count').textContent = notes.length;
+        document.getElementById('airport-count').textContent = new Set(notes.map((note) => note.airport)).size;
+        document.getElementById('model-count').textContent = new Set(notes.map((note) => note.model)).size;
+      };
+
+      noteForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const notes = readNotes();
+        notes.unshift({ date: dateInput.value, airport: document.getElementById('note-airport').value.trim(), model: document.getElementById('note-model').value.trim(), detail: document.getElementById('note-detail').value.trim() });
+        localStorage.setItem(notesKey, JSON.stringify(notes));
+        noteForm.reset();
+        dateInput.value = new Date().toISOString().slice(0, 10);
+        renderNotes();
+      });
+      document.getElementById('logout-button').addEventListener('click', () => {
+        localStorage.removeItem('airframeUser');
+        window.location.href = 'notes.html';
+      });
+      renderNotes();
+    </script>
+  </body>
+</html>

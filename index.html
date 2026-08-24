@@ -3,14 +3,288 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Ellen Horikawa のWebサイトです。" />
-    <title>Ellen Horikawa</title>
+    <meta name="description" content="民間旅客機の型番と、外観から機種を見分けるポイントをまとめたフィールドガイド。" />
+    <title>見上げた空をもっと豊かに — AIRFRAME</title>
+    <style>
+      :root {
+        --ink: #18272e;
+        --ink-soft: #5f6e71;
+        --cream: #f5f2ea;
+        --paper: #fbfaf7;
+        --line: #dce0da;
+        --navy: #102831;
+        --navy-2: #193943;
+        --yellow: #f5c94a;
+        --orange: #dd6f50;
+        --mint: #cdded7;
+        --sky: #dcebee;
+        --white: #fffdf8;
+        --serif: Georgia, "Times New Roman", "Hiragino Mincho ProN", serif;
+        --sans: Arial, "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+        --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body { margin: 0; color: var(--ink); background: var(--cream); font-family: var(--sans); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+      a { color: inherit; text-decoration: none; }
+      button, input { font: inherit; }
+      button { cursor: pointer; }
+
+      .site-header {
+        position: sticky; z-index: 10; top: 0; height: 76px; display: flex; align-items: center; justify-content: space-between;
+        padding: 0 clamp(22px, 4.8vw, 76px); background: rgba(245, 242, 234, .93); border-bottom: 1px solid rgba(24, 39, 46, .11); backdrop-filter: blur(12px);
+      }
+      .brand { display: inline-flex; align-items: center; gap: 12px; font-family: var(--mono); font-size: 14px; font-weight: 700; letter-spacing: .12em; }
+      .brand-mark { width: 29px; height: 29px; display: grid; place-items: center; color: var(--navy); background: var(--yellow); border-radius: 50%; font-size: 12px; letter-spacing: 0; }
+      .main-nav { display: flex; align-items: center; gap: clamp(18px, 2.7vw, 42px); color: #536468; font-size: 12px; font-weight: 700; letter-spacing: .08em; }
+      .main-nav a { transition: color .2s ease; }
+      .main-nav a:hover { color: var(--orange); }
+      .header-cta { display: inline-flex; align-items: center; gap: 10px; padding: 10px 16px 10px 18px; color: var(--white) !important; background: var(--navy); border-radius: 2px; letter-spacing: .06em; }
+      .header-cta span { width: 18px; height: 18px; display: grid; place-items: center; color: var(--navy); background: var(--yellow); border-radius: 50%; font-size: 13px; }
+      .menu-toggle { display: none; }
+
+      .hero-wrap { padding: 28px clamp(16px, 3vw, 48px) 0; background: var(--cream); }
+      .hero { position: relative; min-height: 600px; display: grid; grid-template-columns: minmax(0, .88fr) minmax(480px, 1.12fr); overflow: hidden; background: linear-gradient(90deg, rgba(16, 40, 49, .97) 0%, rgba(16, 40, 49, .87) 39%, rgba(16, 40, 49, .46) 100%), url("assets/etihad-hero.jpg") center / cover no-repeat; border-radius: 4px; isolation: isolate; }
+      .hero::before { content: ""; position: absolute; z-index: -1; width: 600px; height: 600px; right: 6%; bottom: -340px; border: 1px solid rgba(245, 201, 74, .23); border-radius: 50%; box-shadow: 0 0 0 70px rgba(245, 201, 74, .04), 0 0 0 140px rgba(245, 201, 74, .025); }
+      .hero-copy { position: relative; z-index: 2; align-self: center; padding: 68px clamp(28px, 5.5vw, 92px) 72px; }
+      .eyebrow, .section-kicker { display: flex; align-items: center; gap: 11px; margin: 0 0 27px; color: var(--yellow); font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; }
+      .eyebrow::before, .section-kicker::before { content: ""; width: 30px; height: 1px; background: currentColor; }
+      .hero h1 { max-width: 560px; margin: 0; color: var(--white); font-family: var(--serif); font-size: clamp(48px, 6vw, 84px); font-weight: 400; letter-spacing: -.055em; line-height: 1.07; }
+      .hero-title-line { display: inline-block; font-size: .88em; white-space: nowrap; }
+      .hero h1 em { color: var(--yellow); font-style: normal; white-space: nowrap; }
+      .hero-lead { max-width: 390px; margin: 32px 0 0; color: #c5d2d0; font-size: 15px; letter-spacing: .05em; line-height: 2; }
+      .hero-meta { display: flex; flex-wrap: wrap; gap: 25px; margin-top: 42px; padding-top: 17px; border-top: 1px solid rgba(255,255,255,.16); color: #8fa5a6; font-family: var(--mono); font-size: 10px; letter-spacing: .07em; }
+      .hero-meta strong { display: block; margin-bottom: 2px; color: var(--white); font-size: 18px; font-weight: 400; letter-spacing: 0; }
+      .hero-art { position: relative; min-height: 500px; overflow: hidden; }
+      .art-label { position: absolute; z-index: 2; top: 41px; right: clamp(28px, 5vw, 80px); color: #91a9aa; font-family: var(--mono); font-size: 10px; letter-spacing: .1em; writing-mode: vertical-rl; }
+      .radar { position: absolute; width: min(43vw, 590px); height: min(43vw, 590px); right: 3%; top: 4%; border: 1px solid rgba(205, 222, 215, .2); border-radius: 50%; }
+      .radar::before, .radar::after { content: ""; position: absolute; inset: 12%; border: 1px solid rgba(205, 222, 215, .13); border-radius: 50%; }
+      .radar::after { inset: 25%; }
+      .radar-line { position: absolute; width: 140%; height: 1px; top: 55%; left: -20%; background: rgba(205, 222, 215, .15); transform: rotate(-34deg); transform-origin: center; }
+      .radar-dot { position: absolute; width: 7px; height: 7px; top: 23%; left: 21%; background: var(--yellow); border-radius: 50%; box-shadow: 0 0 0 7px rgba(245, 201, 74, .1); }
+      .plane-svg { position: absolute; z-index: 1; width: min(43vw, 540px); right: 7%; top: 10%; opacity: .2; transform: rotate(14deg); filter: drop-shadow(16px 20px 0 rgba(0,0,0,.12)); }
+      .orbit-copy { position: absolute; z-index: 3; left: 8%; bottom: 62px; color: #b5c8c3; font-family: var(--mono); font-size: 10px; line-height: 1.8; letter-spacing: .08em; }
+      .orbit-copy b { color: var(--yellow); font-weight: 400; }
+      .hero-photo-credit { position: absolute; z-index: 4; right: clamp(52px, 5vw, 80px); bottom: 24px; padding: 4px 7px; color: #d9e4e1; background: rgba(16, 40, 49, .72); border: 1px solid rgba(217, 228, 225, .24); font-family: var(--mono); font-size: 8px; line-height: 1.3; letter-spacing: .04em; white-space: nowrap; }
+      .hero-photo-credit:hover { color: var(--navy); background: var(--yellow); }
+      .scroll-cue { position: absolute; z-index: 2; right: 27px; bottom: 26px; color: #9db2b1; font-family: var(--mono); font-size: 10px; letter-spacing: .1em; writing-mode: vertical-rl; }
+      .scroll-cue::after { content: "↓"; display: block; margin-top: 8px; color: var(--yellow); font-size: 16px; }
+
+      .intro { display: grid; grid-template-columns: 1.1fr .9fr; gap: 9%; max-width: 1130px; margin: 0 auto; padding: 118px 28px 106px; }
+      .section-kicker { color: var(--orange); margin-bottom: 19px; }
+      .intro h2, .section-heading h2 { margin: 0; font-family: var(--serif); font-size: clamp(34px, 4vw, 53px); font-weight: 400; letter-spacing: -.045em; line-height: 1.2; }
+      .intro h2 span { white-space: nowrap; }
+      .intro-text { align-self: end; color: var(--ink-soft); font-size: 14px; line-height: 2.05; }
+      .intro-text p { margin: 0; }
+
+      .guide-section { padding: 101px clamp(20px, 6vw, 96px) 114px; background: var(--paper); border-top: 1px solid var(--line); }
+      .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; max-width: 1230px; margin: 0 auto 43px; }
+      .section-heading .section-kicker { margin-bottom: 16px; }
+      .heading-note { max-width: 250px; margin: 0 0 5px; color: var(--ink-soft); font-size: 12px; line-height: 1.9; }
+      .filters { display: flex; flex-wrap: wrap; gap: 8px; max-width: 1230px; margin: 0 auto 31px; }
+      .filter-btn { padding: 9px 17px; color: var(--ink-soft); background: transparent; border: 1px solid var(--line); border-radius: 30px; font-size: 11px; letter-spacing: .08em; transition: .2s ease; }
+      .filter-btn:hover, .filter-btn.is-active { color: var(--navy); background: var(--yellow); border-color: var(--yellow); }
+      .aircraft-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; max-width: 1230px; margin: 0 auto; }
+      .aircraft-card { display: flex; flex-direction: column; min-height: 438px; overflow: hidden; background: var(--cream); border: 1px solid var(--line); border-radius: 3px; transition: transform .25s ease, box-shadow .25s ease; }
+      .aircraft-card:hover { transform: translateY(-5px); box-shadow: 0 16px 28px rgba(24, 39, 46, .08); }
+      .aircraft-card.is-hidden { display: none; }
+      .card-visual { position: relative; min-height: 205px; display: grid; place-items: center; overflow: hidden; background: var(--sky); }
+      .card-visual::before { content: ""; position: absolute; z-index: 2; width: 210px; height: 210px; border: 1px solid rgba(255, 255, 255, .28); border-radius: 50%; pointer-events: none; }
+      .card-visual::after { content: ""; position: absolute; z-index: 2; width: 310px; height: 1px; background: rgba(255, 255, 255, .25); transform: rotate(-21deg); pointer-events: none; }
+      .card-visual.yellow { background: #f4e8bb; }
+      .card-visual.mint { background: var(--mint); }
+      .card-visual.peach { background: #f1d4c8; }
+      .card-index { position: absolute; z-index: 2; top: 14px; left: 16px; color: var(--ink-soft); font-family: var(--mono); font-size: 10px; letter-spacing: .1em; }
+      .family-tag { position: absolute; z-index: 2; top: 13px; right: 15px; padding: 3px 7px; color: var(--ink); border: 1px solid rgba(24,39,46,.25); border-radius: 2px; font-family: var(--mono); font-size: 9px; letter-spacing: .08em; }
+      .card-photo { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; object-fit: cover; filter: saturate(.86) contrast(.98); }
+      .photo-credit { position: absolute; z-index: 3; right: 14px; bottom: 11px; padding: 3px 6px; color: var(--white); background: rgba(16, 40, 49, .7); font-family: var(--mono); font-size: 8px; line-height: 1.3; letter-spacing: .02em; }
+      .photo-credit:hover { background: var(--orange); }
+      .card-plane { position: relative; z-index: 1; width: 84%; max-width: 265px; fill: var(--navy-2); transform: rotate(-10deg); }
+      .card-plane.light { fill: #f9f6e9; filter: drop-shadow(7px 10px 0 rgba(24,39,46,.1)); }
+      .card-plane.accent { fill: #e47554; }
+      .card-body { padding: 23px 22px 24px; }
+      .card-body h3 { margin: 0; color: var(--navy); font-family: var(--serif); font-size: 27px; font-weight: 400; letter-spacing: -.04em; line-height: 1.1; }
+      .card-body h3 small { display: block; margin-bottom: 9px; color: var(--orange); font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: .1em; }
+      .card-copy { margin: 18px 0 0; padding-top: 15px; color: var(--ink-soft); border-top: 1px solid var(--line); font-size: 12px; line-height: 1.85; }
+      .spot-point { display: flex; align-items: baseline; gap: 8px; margin: 14px 0 0; color: var(--ink); font-size: 11px; font-weight: 700; line-height: 1.6; }
+      .spot-point::before { content: "↗"; flex: 0 0 auto; color: var(--orange); font-family: var(--mono); font-size: 14px; }
+
+      .observation { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 1230px; margin: 74px auto 0; }
+      .observation-card { display: grid; grid-template-columns: 47px 1fr; gap: 18px; padding: 25px 27px 26px; background: var(--navy); color: var(--white); }
+      .observation-card:nth-child(2) { background: var(--yellow); color: var(--navy); }
+      .observation-no { color: var(--yellow); font-family: var(--mono); font-size: 14px; }
+      .observation-card:nth-child(2) .observation-no { color: var(--orange); }
+      .observation-card h3 { margin: 0 0 7px; font-family: var(--serif); font-size: 22px; font-weight: 400; letter-spacing: -.03em; line-height: 1.25; }
+      .observation-card p { margin: 0; color: #b9c9c7; font-size: 11px; line-height: 1.8; }
+      .observation-card:nth-child(2) p { color: #5f5b3a; }
+      .live-link { display: flex; align-items: center; gap: 18px; max-width: 1230px; margin: 14px auto 0; padding: 18px 23px; color: var(--white); background: #242f33; border: 1px solid #3a4a4d; transition: background .2s ease, transform .2s ease; }
+      .live-link:hover { background: var(--navy-2); transform: translateY(-2px); }
+      .live-badge { display: inline-flex; align-items: center; gap: 7px; color: #ff9a84; font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: .1em; }
+      .live-badge::before { content: ""; width: 8px; height: 8px; background: #f05f4d; border-radius: 50%; box-shadow: 0 0 0 4px rgba(240, 95, 77, .13); }
+      .live-copy { display: flex; flex: 1; flex-direction: column; gap: 1px; }
+      .live-copy strong { font-family: var(--serif); font-size: 18px; font-weight: 400; letter-spacing: -.02em; }
+      .live-copy small { color: #aebfbd; font-family: var(--mono); font-size: 9px; letter-spacing: .04em; }
+      .live-arrow { color: var(--yellow); font-family: var(--mono); font-size: 20px; }
+
+      .type-section { padding: 112px clamp(20px, 6vw, 96px) 118px; background: var(--cream); }
+      .type-layout { display: grid; grid-template-columns: .8fr 1.2fr; gap: clamp(40px, 8vw, 125px); max-width: 1090px; margin: 0 auto; }
+      .type-intro { max-width: 320px; }
+      .type-intro h2 { margin: 0; font-family: var(--serif); font-size: clamp(34px, 4vw, 49px); font-weight: 400; letter-spacing: -.05em; line-height: 1.18; }
+      .type-intro p { margin: 25px 0 0; color: var(--ink-soft); font-size: 12px; line-height: 1.95; }
+      .naming-box { margin-top: 35px; padding: 16px 18px; color: var(--ink-soft); border-left: 2px solid var(--orange); background: rgba(255,255,255,.45); font-size: 11px; line-height: 1.7; }
+      .naming-box code { color: var(--navy); font-family: var(--mono); font-size: 15px; font-weight: 700; }
+      .type-table-wrap { overflow-x: auto; }
+      .type-table { width: 100%; min-width: 520px; border-collapse: collapse; color: var(--ink); font-size: 12px; }
+      .type-table th { padding: 0 14px 14px; color: var(--ink-soft); border-bottom: 1px solid var(--ink); font-family: var(--mono); font-size: 10px; font-weight: 400; letter-spacing: .08em; text-align: left; }
+      .type-table th:first-child, .type-table td:first-child { padding-left: 0; }
+      .type-table td { padding: 17px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+      .type-table tr:last-child td { border-bottom: 0; }
+      .type-table td:first-child { color: var(--navy); font-family: var(--mono); font-size: 12px; font-weight: 700; }
+      .type-table td:nth-child(2) { font-family: var(--serif); font-size: 17px; }
+      .type-table td:last-child { color: var(--ink-soft); font-size: 11px; line-height: 1.7; }
+
+      .field-note { position: relative; display: grid; grid-template-columns: .8fr 1.2fr; gap: 50px; align-items: center; max-width: 1230px; min-height: 270px; margin: 0 auto; padding: 47px clamp(28px, 5vw, 75px); overflow: hidden; background: var(--orange); color: var(--white); }
+      .field-note::after { content: ""; position: absolute; right: -75px; width: 370px; height: 370px; border: 1px solid rgba(255,255,255,.24); border-radius: 50%; box-shadow: 0 0 0 44px rgba(255,255,255,.07), 0 0 0 88px rgba(255,255,255,.05); }
+      .field-note h2 { position: relative; z-index: 1; margin: 0; font-family: var(--serif); font-size: clamp(31px, 4vw, 50px); font-weight: 400; letter-spacing: -.05em; line-height: 1.14; }
+      .field-note p { position: relative; z-index: 1; max-width: 500px; margin: 0; color: #ffe4d9; font-size: 12px; line-height: 2; }
+      .footer { display: flex; justify-content: space-between; gap: 30px; padding: 27px clamp(22px, 6vw, 96px); color: #829497; background: var(--navy); font-family: var(--mono); font-size: 10px; letter-spacing: .06em; }
+      .footer span:first-child { color: var(--white); }
+
+      @media (max-width: 980px) {
+        .hero { grid-template-columns: minmax(0, 1fr) minmax(340px, 1fr); min-height: 560px; }
+        .hero-copy { padding-left: clamp(28px, 5vw, 60px); }
+        .hero h1 { font-size: clamp(43px, 6.5vw, 68px); }
+        .aircraft-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .type-layout { gap: 50px; }
+      }
+
+      @media (max-width: 700px) {
+        .site-header { height: 66px; }
+        .main-nav { position: absolute; top: 65px; left: 0; right: 0; display: none; flex-direction: column; align-items: stretch; gap: 0; padding: 10px 22px 18px; background: var(--cream); border-bottom: 1px solid var(--line); }
+        .main-nav.is-open { display: flex; }
+        .main-nav a { padding: 10px 0; }
+        .header-cta { justify-content: space-between; }
+        .menu-toggle { display: grid; width: 34px; height: 30px; place-items: center; color: var(--navy); background: none; border: 0; font-size: 22px; }
+        .hero-wrap { padding: 14px 14px 0; }
+        .hero { display: block; min-height: 710px; background-position: 60% center; }
+        .hero-copy { padding: 59px 26px 30px; }
+        .hero h1 { max-width: 440px; font-size: clamp(46px, 13vw, 74px); }
+        .hero-lead { margin-top: 25px; font-size: 13px; }
+        .hero-meta { margin-top: 29px; }
+        .hero-art { position: absolute; right: 0; bottom: 0; left: 0; min-height: 330px; }
+        .radar { width: 390px; height: 390px; top: -15%; right: -8%; }
+        .plane-svg { width: 360px; top: -3%; right: 0; }
+        .orbit-copy { left: 7%; bottom: 25px; }
+        .art-label { top: 29px; right: 18px; }
+        .scroll-cue { display: none; }
+        .intro { display: block; padding: 84px 26px 79px; }
+        .intro-text { margin-top: 27px; }
+        .intro h2 span { white-space: normal; }
+        .guide-section, .type-section { padding: 75px 20px 82px; }
+        .section-heading { display: block; margin-bottom: 31px; }
+        .heading-note { margin-top: 18px; }
+        .aircraft-grid { grid-template-columns: 1fr; }
+        .aircraft-card { min-height: 0; }
+        .card-visual { min-height: 190px; }
+        .observation { grid-template-columns: 1fr; margin-top: 44px; }
+        .type-layout { display: block; }
+        .type-intro { max-width: none; margin-bottom: 47px; }
+        .field-note { display: block; min-height: 0; padding: 40px 27px 42px; }
+        .field-note p { margin-top: 23px; }
+        .footer { display: block; padding: 24px 22px; line-height: 2; }
+        .footer span { display: block; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+      }
+    </style>
   </head>
   <body>
-    <main>
-      <h1>Ellen Horikawa</h1>
-      <p>Welcome to my website.</p>
-      <p>制作物や活動について、少しずつ紹介していきます。</p>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="AIRFRAME トップへ"><span class="brand-mark">✦</span><span>AIRFRAME</span></a>
+      <button class="menu-toggle" type="button" aria-label="メニューを開く" aria-expanded="false">≡</button>
+      <nav class="main-nav" aria-label="メインナビゲーション">
+        <a href="#guide">機種一覧</a><a href="#how-to">見分け方</a><a href="notes.html">観察ノート</a><a href="login.html">ログイン</a><a class="header-cta" href="#guide">型番を探す <span>↗</span></a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero-wrap" aria-labelledby="hero-title">
+        <div class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">Civil aircraft field guide</p>
+            <h1 id="hero-title"><span class="hero-title-line">見上げた空を</span><br /><em>もっと豊かに</em></h1>
+            <p class="hero-lead">民間旅客機の型番と、外観から機種を見分けるための小さなガイド。まずは6機種から。</p>
+            <div class="hero-meta" aria-label="ガイドの概要"><span><strong>06</strong>MODELS</span><span><strong>03</strong>VIEWPOINTS</span><span><strong>01</strong>FIELD NOTE</span></div>
+          </div>
+          <div class="hero-art">
+            <span class="art-label">OBSERVE / IDENTIFY / REMEMBER</span>
+            <div class="radar"><span class="radar-line"></span><span class="radar-dot"></span></div>
+            <svg class="plane-svg" viewBox="0 0 520 560" role="img" aria-label="旅客機のイラスト">
+              <path fill="#f6f4e9" d="M259 14c-9 8-14 24-16 48l-10 156-148 86c-8 5-12 13-9 19 3 6 11 8 21 5l142-38-7 90-65 50c-8 6-11 13-8 19 3 6 11 8 21 5l63-19-2 74c0 25 6 43 17 51 11-8 17-26 17-51l-2-74 63 19c10 3 18 1 21-5 3-6 0-13-8-19l-65-50-7-90 142 38c10 3 18 1 21-5 3-6-1-14-9-19l-148-86-10-156c-2-24-7-40-16-48z" />
+              <path fill="#f5c94a" d="M257 42h6l4 150-7 40-7-40zM163 292l80-42-4 31-93 37zM357 292l-80-42 4 31 93 37z" />
+              <path fill="#274a52" d="M249 71h22v82h-22zM249 171h22v35h-22zM245 444h30v25h-30z" />
+              <path fill="#d86f50" d="M247 497h26v16h-26z" /><circle cx="240" cy="279" r="5" fill="#dd6f50" /><circle cx="280" cy="279" r="5" fill="#dd6f50" />
+            </svg>
+            <p class="orbit-copy"><b>01 / AIRFRAME</b><br />FIELD NOTES FROM THE SKY</p><a class="hero-photo-credit" href="https://commons.wikimedia.org/wiki/File:Boeing_787-9_%E2%80%98A6-BLP%E2%80%99_Etihad_Airways_%2848602821621%29.jpg" target="_blank" rel="noreferrer">BACKGROUND PHOTO / ALAN WILSON</a><span class="scroll-cue">SCROLL TO EXPLORE</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="intro" id="how-to" aria-labelledby="intro-title">
+        <div><p class="section-kicker">Start here</p><h2 id="intro-title">型番は、<span>機体の履歴書。</span></h2></div>
+        <div class="intro-text"><p>「大きな飛行機」から一歩進んで、型番を読めるようになると、空港での景色が変わります。最初に見るのは、機体の長さではなく <strong>翼端・エンジン・窓まわり</strong>。3つの特徴を重ねると、遠くからでも候補を絞れます。</p></div>
+      </section>
+
+      <section class="guide-section" id="guide" aria-labelledby="guide-title">
+        <div class="section-heading"><div><p class="section-kicker">01 / Model index</p><h2 id="guide-title">まず覚えたい6機種</h2></div><p class="heading-note">フィルターで絞ると、見分けるための最初の1ポイントがわかります。</p></div>
+        <div class="filters" aria-label="メーカーで絞り込む">
+          <button class="filter-btn is-active" type="button" data-filter="all">すべて</button><button class="filter-btn" type="button" data-filter="boeing">BOEING</button><button class="filter-btn" type="button" data-filter="airbus">AIRBUS</button><button class="filter-btn" type="button" data-filter="widebody">ワイドボディ</button><button class="filter-btn" type="button" data-filter="narrowbody">単通路</button>
+        </div>
+        <div class="aircraft-grid">
+          <article class="aircraft-card" data-maker="boeing" data-size="narrowbody"><div class="card-visual yellow"><span class="card-index">01 / 06</span><span class="family-tag">BOEING · NARROW</span><img class="card-photo" src="assets/aircraft/boeing-737-800.jpg" alt="空港の駐機場にいる Boeing 737-800" loading="lazy" decoding="async" /><a class="photo-credit" href="https://commons.wikimedia.org/wiki/File:Boeing_737-800_-_American_Airlines_-_N898NN.jpg" target="_blank" rel="noreferrer">Photo / Oleg Yunakov</a></div><div class="card-body"><h3><small>BOEING</small>737-800</h3><p class="card-copy">細身の機体に、低い位置の2基のエンジン。空港で最も出会いやすい単通路機のひとつです。</p><p class="spot-point">翼端のウイングレットと、短めの機首</p></div></article>
+          <article class="aircraft-card" data-maker="airbus" data-size="narrowbody"><div class="card-visual mint"><span class="card-index">02 / 06</span><span class="family-tag">AIRBUS · NARROW</span><img class="card-photo" src="assets/aircraft/airbus-a320neo.jpg" alt="空港で撮影された Airbus A320neo" loading="lazy" decoding="async" /><a class="photo-credit" href="https://commons.wikimedia.org/wiki/File:CC-AWR_JetSMART_Airbus_A320neo_in_GIG.jpg" target="_blank" rel="noreferrer">Photo / Wilfredor</a></div><div class="card-body"><h3><small>AIRBUS</small>A320neo</h3><p class="card-copy">737とよく似たサイズ感。機首がやや丸く、コックピット窓の下に黒い斜めのラインが見えます。</p><p class="spot-point">大きく尖ったシャークレット</p></div></article>
+          <article class="aircraft-card" data-maker="boeing" data-size="widebody"><div class="card-visual peach"><span class="card-index">03 / 06</span><span class="family-tag">BOEING · WIDE</span><img class="card-photo" src="assets/aircraft/boeing-787-9.jpg" alt="離陸する Boeing 787-9 Dreamliner" loading="lazy" decoding="async" /><a class="photo-credit" href="https://commons.wikimedia.org/wiki/File:United_Airlines_Boeing_787-9_Dreamliner_N61101_%22100_Years%22_%2855277285248%29.jpg" target="_blank" rel="noreferrer">Photo / Liam Thompson</a></div><div class="card-body"><h3><small>BOEING</small>787-9</h3><p class="card-copy">中型のワイドボディ機。翼が長くしなやかで、2基のエンジン後縁に独特のギザギザがあります。</p><p class="spot-point">エンジン後縁の「シェブロン」</p></div></article>
+          <article class="aircraft-card" data-maker="airbus" data-size="widebody"><div class="card-visual sky"><span class="card-index">04 / 06</span><span class="family-tag">AIRBUS · WIDE</span><img class="card-photo" src="assets/aircraft/airbus-a350-900.jpg" alt="展示会場で撮影された Airbus A350-900" loading="lazy" decoding="async" /><a class="photo-credit" href="https://commons.wikimedia.org/wiki/File:Airbus_A350-900_%2840862885025%29.jpg" target="_blank" rel="noreferrer">Photo / Lutz Blohm</a></div><div class="card-body"><h3><small>AIRBUS</small>A350-900</h3><p class="card-copy">機体の曲線がきれいな双発機。正面からは、黒い「アイマスク」のようなコックピット窓が目印です。</p><p class="spot-point">一体感のある黒い窓まわり</p></div></article>
+          <article class="aircraft-card" data-maker="boeing" data-size="widebody"><div class="card-visual mint"><span class="card-index">05 / 06</span><span class="family-tag">BOEING · WIDE</span><img class="card-photo" src="assets/aircraft/boeing-777-300er.jpg" alt="滑走路を走る Boeing 777-300ER" loading="lazy" decoding="async" /><a class="photo-credit" href="https://commons.wikimedia.org/wiki/File:Ethiopian_Airlines_Boeing_777-300ER.jpg" target="_blank" rel="noreferrer">Photo / Verril Ginting</a></div><div class="card-body"><h3><small>BOEING</small>777-300ER</h3><p class="card-copy">長く大きな胴体に、巨大なエンジンが2基。主脚を横から見ると、片側6輪なのも特徴です。</p><p class="spot-point">大きな丸いエンジンと長い胴体</p></div></article>
+          <article class="aircraft-card" data-maker="airbus" data-size="widebody"><div class="card-visual yellow"><span class="card-index">06 / 06</span><span class="family-tag">AIRBUS · WIDE</span><img class="card-photo" src="assets/aircraft/airbus-a380-800.jpg" alt="空港の駐機場にいる Airbus A380-800" loading="lazy" decoding="async" /><a class="photo-credit" href="https://commons.wikimedia.org/wiki/File:Airbus_A380_on_the_tarmac_%282103514407%29.jpg" target="_blank" rel="noreferrer">Photo / Fernando Mafra</a></div><div class="card-body"><h3><small>AIRBUS</small>A380-800</h3><p class="card-copy">遠くからでもわかる総2階建て。4基のエンジンと、翼から後ろまで続く上層デッキを持つ超大型機です。</p><p class="spot-point">機首から尾翼まで続く2つのデッキ</p></div></article>
+        </div>
+        <div class="observation" id="notes"><div class="observation-card"><span class="observation-no">01</span><div><h3>まず、翼の先を見る。</h3><p>上向きのウイングレットか、後ろへ流れる大きな翼端か。シルエットだけでも候補が見えてきます。</p></div></div><div class="observation-card"><span class="observation-no">02</span><div><h3>次に、エンジンを見る。</h3><p>位置・大きさ・後縁の形をチェック。787のギザギザは、遠目にも頼れるサインです。</p></div></div></div>
+        <a class="live-link" href="https://www.youtube.com/@loveflightjack/live" target="_blank" rel="noreferrer"><span class="live-badge">LIVE</span><span class="live-copy"><strong>成田空港のライブ配信を見る</strong><small>Love Flight Jack / NARITA AIRPORT PLANE SPOTTING</small></span><span class="live-arrow">↗</span></a>
+        <a class="live-link" href="https://www.youtube.com/watch?v=6JUS3yFMWN8" target="_blank" rel="noreferrer"><span class="live-badge">LIVE</span><span class="live-copy"><strong>羽田空港のライブ配信を見る</strong><small>日テレNEWS / HANEDA AIRPORT TERMINAL 2</small></span><span class="live-arrow">↗</span></a>
+      </section>
+
+      <section class="type-section" aria-labelledby="type-title"><div class="type-layout"><div class="type-intro"><p class="section-kicker">02 / Decode the name</p><h2 id="type-title">型番を<br />読んでみる。</h2><p>メーカーごとに表記のルールがあります。数字を丸暗記するより、「シリーズ」と「派生型」に分けて見るのがコツ。</p><div class="naming-box"><code>787 — 9</code><br />シリーズ名　／　胴体の長さ・派生型</div></div><div class="type-table-wrap"><table class="type-table"><thead><tr><th>型番</th><th>シリーズ</th><th>ここを見る</th></tr></thead><tbody><tr><td>737-800</td><td>737 Next Generation</td><td>単通路。低いエンジン位置と、翼端のウイングレット。</td></tr><tr><td>A320neo</td><td>A320 family</td><td>単通路。シャークレットと、丸みのある機首。</td></tr><tr><td>787-9</td><td>Dreamliner</td><td>ワイドボディ。しなやかな翼とシェブロンノズル。</td></tr><tr><td>A350-900</td><td>A350 XWB</td><td>ワイドボディ。黒いコックピット窓と流線型の翼。</td></tr><tr><td>777-300ER</td><td>777 family</td><td>ワイドボディ。長い胴体、巨大なエンジン、6輪の主脚。</td></tr><tr><td>A380-800</td><td>A380</td><td>総2階建て。4基のエンジンを持つ最大級の旅客機。</td></tr></tbody></table></div></div></section>
+      <section class="field-note" aria-labelledby="note-title"><h2 id="note-title">見分けることは、<br />空を読むこと。</h2><p>写真を撮ったら、翼端・エンジン・窓まわりの3点をメモしてみてください。機体は航空会社や仕様によって見え方が変わるので、最後は複数の特徴を組み合わせて判断するのが確実です。</p></section>
     </main>
+    <footer class="footer"><span>AIRFRAME / CIVIL AIRCRAFT FIELD GUIDE</span><span>識別は目安です。仕様・改修により外観は異なります。</span></footer>
+    <script>
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      const cards = document.querySelectorAll('.aircraft-card');
+      filterButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const filter = button.dataset.filter;
+          filterButtons.forEach((item) => item.classList.toggle('is-active', item === button));
+          cards.forEach((card) => {
+            const matches = filter === 'all' || card.dataset.maker === filter || card.dataset.size === filter;
+            card.classList.toggle('is-hidden', !matches);
+          });
+        });
+      });
+      const menuToggle = document.querySelector('.menu-toggle');
+      const mainNav = document.querySelector('.main-nav');
+      menuToggle.addEventListener('click', () => {
+        const isOpen = mainNav.classList.toggle('is-open');
+        menuToggle.setAttribute('aria-expanded', String(isOpen));
+        menuToggle.setAttribute('aria-label', isOpen ? 'メニューを閉じる' : 'メニューを開く');
+      });
+      mainNav.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => {
+        mainNav.classList.remove('is-open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }));
+    </script>
   </body>
 </html>

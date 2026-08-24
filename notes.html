@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="空港で見つけた機体や、空の観察を記録するためのAIRFRAME観察ノート。" />
+    <title>観察ノート — AIRFRAME</title>
+    <link rel="stylesheet" href="notes.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html" aria-label="AIRFRAME トップへ"><span class="brand-mark">✦</span><span>AIRFRAME</span></a>
+      <nav class="site-nav" aria-label="メインナビゲーション">
+        <a href="index.html#guide">機種一覧</a>
+        <a href="index.html#how-to">見分け方</a>
+        <a class="active" href="notes.html">観察ノート</a>
+        <a class="nav-cta" data-auth-link data-logged-label="マイページ" href="login.html">ログイン</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="page-shell">
+        <section class="notes-hero" aria-labelledby="notes-title">
+          <div class="notes-hero-copy">
+            <p class="eyebrow">03 / Observation log</p>
+            <h1 id="notes-title">観察した空を、<br /><em>記録する。</em></h1>
+            <p class="notes-hero-lead">見つけた機体、見分けるヒント、その日の空。小さな気づきを残しておくと、次に空を見上げたときの解像度が上がります。</p>
+            <div class="page-actions"><a class="button yellow" data-auth-link data-logged-label="自分のノートへ" href="login.html">ログインして自分のページへ ↗</a><a class="button secondary" href="index.html#guide">機種一覧を見る</a></div>
+          </div>
+          <div class="notes-hero-art" aria-hidden="true">
+            <svg class="note-plane" viewBox="0 0 520 180"><path fill="#f5c94a" d="M24 90c0-8 7-13 18-13h155l28-42c5-8 13-12 22-12h14l-13 54h79l33-27c6-5 14-7 22-6l23 4-42 29h100c30 0 45 5 45 13s-15 13-45 13H343l42 29-23 4c-8 1-16-1-22-6l-33-27h-79l13 54h-14c-9 0-17-4-22-12l-28-42H42c-11 0-18-5-18-13z" /></svg>
+            <span class="note-hero-label">OBSERVE / WRITE / RETURN</span>
+          </div>
+        </section>
+
+        <div class="notes-main">
+          <section class="content-panel" aria-labelledby="sample-title">
+            <p class="section-kicker">Public preview</p>
+            <h2 id="sample-title">空を見た日のメモ</h2>
+            <p>観察ノートには、場所や機体の型番、そのとき見えた特徴を残せます。まずはこんなふうに。</p>
+            <div class="sample-grid">
+              <article class="sample-note"><time datetime="2026-08-20">2026.08.20 / HANEDA</time><h3>夕方のT2展望デッキ</h3><p>A350らしい黒い窓まわり。夕方の光で翼端がきれいに見えた。</p></article>
+              <article class="sample-note"><time datetime="2026-08-16">2026.08.16 / NARITA</time><h3>長い胴体を見つけた</h3><p>大きなエンジンと長い機体。777-300ERの候補として記録。</p></article>
+            </div>
+          </section>
+          <aside class="content-panel accent" aria-labelledby="tip-title">
+            <p class="section-kicker">Your field note</p>
+            <h2 id="tip-title">自分だけの<br />空港ノートを。</h2>
+            <p>ログインすると、観察した場所・機体・気づきを自分のページに保存できます。</p>
+            <ul class="tip-list"><li>見つけた日と空港を残す</li><li>型番の候補をメモする</li><li>次に見たい機体を決める</li></ul>
+            <a class="button" data-auth-link data-logged-label="ノートを開く" href="login.html">ログインして始める ↗</a>
+          </aside>
+        </div>
+      </div>
+    </main>
+
+    <footer class="notes-footer"><span>AIRFRAME / OBSERVATION NOTE</span><span>空の記録を、次の発見へ。</span></footer>
+    <script>
+      const savedUser = localStorage.getItem('airframeUser');
+      let user = null;
+      try { user = savedUser ? JSON.parse(savedUser) : null; } catch (error) { user = null; }
+      document.querySelectorAll('[data-auth-link]').forEach((link) => {
+        if (user) {
+          link.href = 'mypage.html';
+          if (link.dataset.loggedLabel) link.textContent = link.dataset.loggedLabel + ' ↗';
+        }
+      });
+    </script>
+  </body>
+</html>
